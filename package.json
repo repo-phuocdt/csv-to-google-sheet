@@ -1,0 +1,11 @@
+{
+  "name": "writing-csv-to-google-sheet",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "csv-parse": "^5.5.0",
+    "googleapis": "47",
+    "lodash": "^4.17.21"
+  }
+}
