@@ -465,6 +465,65 @@ async function createSheetAndWriteData(data) {
       });
       lineCurrently += 1;
     });
+
+    sheets.spreadsheets.batchUpdate({
+      auth: client,
+      spreadsheetId: spreadsheetId,
+      resource: {
+        requests: [
+          {
+            repeatCell: {
+              range: {
+                sheetId: copiedSheetId,
+                startRowIndex: 0,
+                endRowIndex: lineCurrently - 1,
+                startColumnIndex: 0,
+                endColumnIndex: 52,
+              },
+              cell: {
+                userEnteredFormat: {
+                  borders: {
+                    top: {
+                      style: "DOTTED",
+                      color: {
+                        red: 0.0,
+                        green: 0.0,
+                        blue: 0.0,
+                      },
+                    },
+                    bottom: {
+                      style: "DOTTED",
+                      color: {
+                        red: 0.0,
+                        green: 0.0,
+                        blue: 0.0,
+                      },
+                    },
+                    left: {
+                      style: "DOTTED",
+                      color: {
+                        red: 0.0,
+                        green: 0.0,
+                        blue: 0.0,
+                      },
+                    },
+                    right: {
+                      style: "DOTTED",
+                      color: {
+                        red: 0.0,
+                        green: 0.0,
+                        blue: 0.0,
+                      },
+                    },
+                  },
+                },
+              },
+              fields: "userEnteredFormat.borders",
+            },
+          },
+        ],
+      },
+    });
   } catch (error) {
     console.error("An error occurred:", error);
   }
