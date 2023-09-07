@@ -73,8 +73,8 @@ async function createSheetAndWriteData(data) {
       },
     });
 
-    Object.keys(data).map(async (item) => {
-      sheets.spreadsheets.batchUpdate({
+    for (const item of Object.keys(data)) {
+      await sheets.spreadsheets.batchUpdate({
         auth: client,
         spreadsheetId: spreadsheetId,
         resource: {
@@ -123,7 +123,7 @@ async function createSheetAndWriteData(data) {
           ],
         },
       });
-      sheets.spreadsheets.values.update({
+      await sheets.spreadsheets.values.update({
         auth: client,
         spreadsheetId: spreadsheetId,
         range: `A${lineCurrently}`,
@@ -132,8 +132,8 @@ async function createSheetAndWriteData(data) {
           values: [[item]],
         },
       });
-      lineCurrently += 1;
-      sheets.spreadsheets.batchUpdate({
+      await lineCurrently++;
+      await sheets.spreadsheets.batchUpdate({
         auth: client,
         spreadsheetId: spreadsheetId,
         resource: {
@@ -285,7 +285,7 @@ async function createSheetAndWriteData(data) {
           ],
         },
       });
-      sheets.spreadsheets.values.update({
+      await sheets.spreadsheets.values.update({
         auth: client,
         spreadsheetId: spreadsheetId,
         range: `A${lineCurrently}`,
@@ -349,8 +349,8 @@ async function createSheetAndWriteData(data) {
           ],
         },
       });
-      lineCurrently += 1;
-      sheets.spreadsheets.values.update({
+      await lineCurrently++;
+      await sheets.spreadsheets.values.update({
         auth: client,
         spreadsheetId: spreadsheetId,
         range: `A${lineCurrently}`,
@@ -414,8 +414,8 @@ async function createSheetAndWriteData(data) {
           ],
         },
       });
-      lineCurrently += 1;
-      sheets.spreadsheets.batchUpdate({
+      await lineCurrently++;
+      await sheets.spreadsheets.batchUpdate({
         auth: client,
         spreadsheetId: spreadsheetId,
         resource: {
@@ -435,7 +435,7 @@ async function createSheetAndWriteData(data) {
           ],
         },
       });
-      sheets.spreadsheets.values.update({
+      await sheets.spreadsheets.values.update({
         auth: client,
         spreadsheetId: spreadsheetId,
         range: `A${lineCurrently}`,
@@ -444,15 +444,14 @@ async function createSheetAndWriteData(data) {
           values: [["Resource Allocation"]],
         },
       });
-      lineCurrently += 1;
+      await lineCurrently++;
 
-      // For Resource Allocation
-      data[item].map((item, index) => {
-        const newItem = [...item];
+      for (const dataItem of data[item]) {
+        const newItem = [...dataItem];
         newItem[0] = newItem[2];
         newItem[2] = "=D" + lineCurrently + "/4";
         newItem[3] = "=SUM(E" + `${lineCurrently}` + ":AZ" + `${lineCurrently}` + ")";
-        sheets.spreadsheets.values.update({
+        await sheets.spreadsheets.values.update({
           auth: client,
           spreadsheetId: spreadsheetId,
           range: `A${lineCurrently}`,
@@ -461,12 +460,13 @@ async function createSheetAndWriteData(data) {
             values: [newItem],
           },
         });
-        lineCurrently += 1;
-      });
-      lineCurrently += 1;
-    });
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        await lineCurrently++;
+      }
+      await lineCurrently++;
+    }
 
-    sheets.spreadsheets.batchUpdate({
+    await sheets.spreadsheets.batchUpdate({
       auth: client,
       spreadsheetId: spreadsheetId,
       resource: {
@@ -532,7 +532,7 @@ async function createSheetAndWriteData(data) {
 async function handleUploadCSVToGoogleSheet() {
   // Load CSV data
   const data = [];
-  fs.createReadStream("./resource-list.csv")
+  fs.createReadStream("./resource-list-1.csv")
     .pipe(parse({ delimiter: ",", from_line: 3 }))
     .on("data", (row) => data.push(row))
     .on("end", () => {
