@@ -12,7 +12,7 @@ const client = new google.auth.JWT(credentials.client_email, null, credentials.p
 
 async function createSheetAndWriteData(data) {
   // Your Google Sheet ID (you can find it in the URL)
-  const spreadsheetId = "1eWEJdrrjIaZFF8lWXAje4KvGnc9jJtD5Jz3xjvK7y5o";
+  const spreadsheetId = "1YeZk2vLpNbI-WPoFkYxs_gZy3PqQPLzUDdHScs6t5lg";
   let lineCurrently = 11;
 
   const currentDate = new Date();
@@ -126,7 +126,7 @@ async function createSheetAndWriteData(data) {
       await sheets.spreadsheets.values.update({
         auth: client,
         spreadsheetId: spreadsheetId,
-        range: `A${lineCurrently}`,
+        range: `${newSheetTitle}!A${lineCurrently}:BD${lineCurrently}`,
         valueInputOption: "RAW",
         resource: {
           values: [[item]],
@@ -288,7 +288,7 @@ async function createSheetAndWriteData(data) {
       await sheets.spreadsheets.values.update({
         auth: client,
         spreadsheetId: spreadsheetId,
-        range: `A${lineCurrently}`,
+        range: `${newSheetTitle}!A${lineCurrently}:BD${lineCurrently}`,
         valueInputOption: "USER_ENTERED",
         resource: {
           values: [
@@ -353,7 +353,7 @@ async function createSheetAndWriteData(data) {
       await sheets.spreadsheets.values.update({
         auth: client,
         spreadsheetId: spreadsheetId,
-        range: `A${lineCurrently}`,
+        range: `${newSheetTitle}!A${lineCurrently}:BD${lineCurrently}`,
         valueInputOption: "USER_ENTERED",
         resource: {
           values: [
@@ -438,7 +438,7 @@ async function createSheetAndWriteData(data) {
       await sheets.spreadsheets.values.update({
         auth: client,
         spreadsheetId: spreadsheetId,
-        range: `A${lineCurrently}`,
+        range: `${newSheetTitle}!A${lineCurrently}:BD${lineCurrently}`,
         valueInputOption: "RAW",
         resource: {
           values: [["Resource Allocation"]],
@@ -446,24 +446,27 @@ async function createSheetAndWriteData(data) {
       });
       await lineCurrently++;
 
+      const results = [];
       for (const dataItem of data[item]) {
         const newItem = [...dataItem];
         newItem[0] = newItem[2];
         newItem[2] = "=D" + lineCurrently + "/4";
         newItem[3] = "=SUM(E" + `${lineCurrently}` + ":AZ" + `${lineCurrently}` + ")";
-        await sheets.spreadsheets.values.update({
-          auth: client,
-          spreadsheetId: spreadsheetId,
-          range: `A${lineCurrently}`,
-          valueInputOption: "USER_ENTERED",
-          resource: {
-            values: [newItem],
-          },
-        });
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        results.push(newItem);
         await lineCurrently++;
       }
+
+      await sheets.spreadsheets.values.update({
+        auth: client,
+        spreadsheetId: spreadsheetId,
+        range: `${newSheetTitle}!A${lineCurrently - data[item].length}:BD${lineCurrently + data[item].length}`,
+        valueInputOption: "USER_ENTERED",
+        resource: {
+          values: results,
+        },
+      });
       await lineCurrently++;
+      await new Promise((resolve) => setTimeout(resolve, 10000));
     }
 
     await sheets.spreadsheets.batchUpdate({
