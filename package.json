@@ -4,8 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "csv-parse": "^5.5.0",
-    "googleapis": "47",
-    "lodash": "^4.17.21"
+    "csv-parse": "^7.0.3",
+    "googleapis": "^188.0.0",
+    "lodash": "^4.17.23"
   }
 }
